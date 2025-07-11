@@ -1,0 +1,45 @@
+# Entornos virtuales
+venv/
+ENV/
+.env
+.venv/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de base de datos
+*.sqlite3
+
+# Archivos de configuración y secretos
+*.env
+*.local
+
+# Archivos de Django
+/staticfiles/
+/media/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de VSCode
+.vscode/
+
+# Archivos de PowerShell
+*.ps1
+
+# Archivos de logs
+*.log
+
+# Archivos de migraciones compilados
+*.pyc
+
+# Archivos de pruebas
+htmlcov/
+.coverage
+.tox/
+
+# Archivos de node (si existieran)
+node_modules/ 

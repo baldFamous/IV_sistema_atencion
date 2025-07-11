@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Admin Turnos</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+</head>
+<body>
+    <h1>Panel de Funcionarios</h1>
+
+    <div class="header-info">
+        <p>Hora Actual ({{ TARGET_TZ_STR }}): <span id="current-time-display">{{ current_time_initial_str }}</span></p>
+        <p>Horario de atención: Hasta las <span id="cutoff-time-display">{{ operational_cutoff_str }}</span></p>
+        <p>Estado del Sistema: <strong id="operational-status-display">{% if is_operational_initial %}Operacional{% else %}Fuera de Horario{% endif %}</strong></p>
+    </div>
+
+    <div id="ws-status">Conectando al servidor de turnos...</div>
+    <div id="error-message"></div>
+    <div id="status"></div>
+
+    <div class="container">
+        <div class="unit-section" id="sae-section">
+            <h2>SAE</h2>
+            <div id="sae-buttons">
+                {% for official in officials_sae %}
+                <button data-unit="SAE" data-official-id="{{ official.id }}">{{ official.name }}</button>
+                {% endfor %}
+            </div>
+            <div class="counts-display">
+                <p>Atenciones SAE (hoy): <strong id="sae-count">0</strong></p>
+            </div>
+        </div>
+        <div class="unit-section" id="mineduc-section">
+            <h2>Ayuda Mineduc</h2>
+            <div id="mineduc-buttons">
+                {% for official in officials_mineduc %}
+                <button data-unit="MINEDUC" data-official-id="{{ official.id }}">{{ official.name }}</button>
+                {% endfor %}
+            </div>
+            <div class="counts-display">
+                <p>Atenciones Ayuda Mineduc (hoy): <strong id="mineduc-count">0</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SYSTEM_OPERATIONAL = {{ is_operational_initial|yesno:"true,false" }};
+    </script>
+    <script>
+        // Verificar que el script se cargue
+        console.log('Iniciando carga del script...');
+        
+        // Cargar el script dinámicamente
+        const script = document.createElement('script');
+        script.src = "{% static 'turnos/script.js' %}";
+        script.onload = function() {
+            console.log('Script cargado correctamente');
+        };
+        script.onerror = function() {
+            console.error('Error al cargar el script');
+        };
+        document.body.appendChild(script);
+    </script>
+</body>
+</html>
