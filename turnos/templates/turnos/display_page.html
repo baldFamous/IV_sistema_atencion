@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualización de Turnos</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #e9ecef; text-align: center; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #cfd8dc; text-align: center; }
         .info-header { position: absolute; top: 20px; width: 90%; text-align: center; font-size: 1.2em; color: #495057;}
         .info-header p { margin: 5px; }
         .container { display: flex; width: 90%; max-width: 1200px; height: 70%; max-height: 600px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); border-radius: 10px; overflow: hidden;}
         .panel { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-size: 2.5vw; /* Responsive font size */ padding: 20px; transition: background-color 0.5s ease; }
         .sae { background-color: #28a745; /* Verde */ }
+        .becas { background-color: #17a2b8; /* Celeste/teal */ }
         .mineduc { background-color: #ffc107; /* Amarillo */ color: #333; /* Texto oscuro para mejor contraste */ }
         .panel h2 { font-size: calc(1.5em + 1vw); /* Título más grande y responsive */ margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
         .panel p.count { font-size: calc(4em + 2vw); /* Contador muy grande y responsive */ font-weight: bold; margin: 0; line-height: 1; }
@@ -32,7 +33,7 @@
         }
     </style>
 </head>
-<body>
+<body id="display-page">
     <div class="info-header">
         <p>Sistema de Atención al Público</p>
         <p id="system-status-public">Cargando estado del sistema...</p>
@@ -43,6 +44,11 @@
             <h2>SAE</h2>
             <p class="count" id="sae-count-display">0</p>
             <p class="module" id="sae-module-display"></p>
+        </div>
+        <div class="panel becas">
+            <h2>Becas</h2>
+            <p class="count" id="becas-count-display">0</p>
+            <p class="module" id="becas-module-display"></p>
         </div>
         <div class="panel mineduc">
             <h2>Ayuda Mineduc</h2>
@@ -55,10 +61,12 @@
     <script>
         const saeCountDisplayEl = document.getElementById('sae-count-display');
         const mineducCountDisplayEl = document.getElementById('mineduc-count-display');
+        const becasCountDisplayEl = document.getElementById('becas-count-display');
         const statusFooterEl = document.getElementById('status-footer');
         const systemStatusPublicEl = document.getElementById('system-status-public');
         const saeModuleDisplayEl = document.getElementById('sae-module-display');
         const mineducModuleDisplayEl = document.getElementById('mineduc-module-display');
+        const becasModuleDisplayEl = document.getElementById('becas-module-display');
 
         const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
         const ws_path = `${ws_scheme}://${window.location.host}/ws/turnos/`;
@@ -71,9 +79,14 @@
 
         turnoSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
+            const audio = new Audio('/static/beep.mp3')
+
             if (data.type === 'update_counts') {
+                // Reproducir solo si hubo cambio (comparación simple podría agregarse)
+                audio.play();
                 saeCountDisplayEl.textContent = data.counts.SAE;
                 mineducCountDisplayEl.textContent = data.counts.MINEDUC;
+                becasCountDisplayEl.textContent = data.counts.BECAS;
                 
                 if (data.counts.SAE_module) {
                     saeModuleDisplayEl.textContent = `Módulo ${data.counts.SAE_module}`;
@@ -85,6 +98,12 @@
                     mineducModuleDisplayEl.textContent = `Módulo ${data.counts.MINEDUC_module}`;
                 } else {
                     mineducModuleDisplayEl.textContent = '';
+                }
+
+                if (data.counts.BECAS_module) {
+                    becasModuleDisplayEl.textContent = `Módulo ${data.counts.BECAS_module}`;
+                } else {
+                    becasModuleDisplayEl.textContent = '';
                 }
 
                 if (data.counts.is_operational === false) {
@@ -105,6 +124,7 @@
             systemStatusPublicEl.style.color = 'red';
             saeCountDisplayEl.textContent = 'X';
             mineducCountDisplayEl.textContent = 'X';
+            becasCountDisplayEl.textContent = 'X';
              // Recargar para reintentar conexión
             setTimeout(() => { window.location.reload(); }, 5000);
         };
@@ -117,6 +137,7 @@
             console.error('WebSocket Error:', err);
             saeCountDisplayEl.textContent = 'X';
             mineducCountDisplayEl.textContent = 'X';
+            becasCountDisplayEl.textContent = 'X';
         }
     </script>
 </body>

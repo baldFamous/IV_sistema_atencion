@@ -4,7 +4,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
 
-from .utils import get_current_day_counts, record_atencion_if_operational, get_operational_datetime_info
+from .utils import get_current_day_counts, record_atencion_if_operational, get_operational_datetime_info, record_recepcion_if_operational
 
 class TurnoConsumer(AsyncWebsocketConsumer):
     GROUP_NAME = 'turnos_publicos' # Nombre del grupo para broadcast
@@ -78,6 +78,55 @@ class TurnoConsumer(AsyncWebsocketConsumer):
                             'counts': current_counts
                         }
                     )
+            elif action_type == 'increment_recepcion':
+                unit = data.get('unit')
+                
+                success, message = await asyncio.wait_for(
+                    sync_to_async(record_recepcion_if_operational)(unit),
+                    timeout=self.TIMEOUT
+                )
+
+                if not success:
+                    await self.send(text_data=json.dumps({
+                        'type': 'error_message',
+                        'message': message
+                    }))
+                else:
+                    current_counts = await asyncio.wait_for(
+                        sync_to_async(get_current_day_counts)(),
+                        timeout=self.TIMEOUT
+                    )
+                    await self.channel_layer.group_send(
+                        self.GROUP_NAME,
+                        {
+                            'type': 'broadcast_counts',
+                            'counts': current_counts
+                        }
+                    )
+            elif action_type == 'recall_turno':
+                unit = data.get('unit')
+                official_id = int(data.get('official_id', 0))
+                
+                # Fetch current counts and override the module to force the sound/highlight
+                current_counts = await asyncio.wait_for(
+                    sync_to_async(get_current_day_counts)(),
+                    timeout=self.TIMEOUT
+                )
+                
+                if unit == 'SAE':
+                    current_counts['SAE_module'] = official_id
+                elif unit == 'MINEDUC':
+                    current_counts['MINEDUC_module'] = official_id
+                elif unit == 'BECAS':
+                    current_counts['BECAS_module'] = official_id
+
+                await self.channel_layer.group_send(
+                    self.GROUP_NAME,
+                    {
+                        'type': 'broadcast_counts',
+                        'counts': current_counts
+                    }
+                )
             elif action_type == 'request_initial_counts':
                 initial_counts = await asyncio.wait_for(
                     sync_to_async(get_current_day_counts)(),
