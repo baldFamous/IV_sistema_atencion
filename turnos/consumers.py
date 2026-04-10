@@ -120,6 +120,9 @@ class TurnoConsumer(AsyncWebsocketConsumer):
                 elif unit == 'BECAS':
                     current_counts['BECAS_module'] = official_id
 
+                current_counts['recall'] = True
+                current_counts['recall_unit'] = unit
+
                 await self.channel_layer.group_send(
                     self.GROUP_NAME,
                     {

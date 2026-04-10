@@ -25,7 +25,10 @@
             <h2>SAE</h2>
             <div id="sae-buttons">
                 {% for official in officials_sae %}
-                <button data-unit="SAE" data-official-id="{{ official.id }}">{{ official.name }}</button>
+                <div style="margin-bottom: 5px;">
+                    <button data-unit="SAE" data-official-id="{{ official.id }}">{{ official.name }}</button>
+                    <button class="recall-btn" data-unit="SAE" data-official-id="{{ official.id }}" style="background-color: #6c757d; font-size: 0.9em; padding: 5px;">🔊 Repetir</button>
+                </div>
                 {% endfor %}
             </div>
             <div class="counts-display">
@@ -36,7 +39,10 @@
             <h2>Becas</h2>
             <div id="becas-buttons">
                 {% for official in officials_becas %}
-                <button data-unit="BECAS" data-official-id="{{ official.id }}">{{ official.name }}</button>
+                <div style="margin-bottom: 5px;">
+                    <button data-unit="BECAS" data-official-id="{{ official.id }}">{{ official.name }}</button>
+                    <button class="recall-btn" data-unit="BECAS" data-official-id="{{ official.id }}" style="background-color: #6c757d; font-size: 0.9em; padding: 5px;">🔊 Repetir</button>
+                </div>
                 {% endfor %}
             </div>
             <div class="counts-display">
@@ -47,7 +53,10 @@
             <h2>Ayuda Mineduc</h2>
             <div id="mineduc-buttons">
                 {% for official in officials_mineduc %}
-                <button data-unit="MINEDUC" data-official-id="{{ official.id }}">{{ official.name }}</button>
+                <div style="margin-bottom: 5px;">
+                    <button data-unit="MINEDUC" data-official-id="{{ official.id }}">{{ official.name }}</button>
+                    <button class="recall-btn" data-unit="MINEDUC" data-official-id="{{ official.id }}" style="background-color: #6c757d; font-size: 0.9em; padding: 5px;">🔊 Repetir</button>
+                </div>
                 {% endfor %}
             </div>
             <div class="counts-display">
@@ -58,6 +67,7 @@
 
     <script>
         const SYSTEM_OPERATIONAL = {{ is_operational_initial|yesno:"true,false" }};
+        let lastBecasCount = null;
     </script>
     <script>
         // Verificar que el script se cargue
