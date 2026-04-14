@@ -82,8 +82,32 @@
             const audio = new Audio('/static/beep.mp3')
 
             if (data.type === 'update_counts') {
-                // Reproducir solo si hubo cambio (comparación simple podría agregarse)
-                audio.play();
+                let saeChanged = (saeCountDisplayEl.textContent !== data.counts.SAE.toString()) || (data.counts.recall_unit === 'SAE');
+                let mineducChanged = (mineducCountDisplayEl.textContent !== data.counts.MINEDUC.toString()) || (data.counts.recall_unit === 'MINEDUC');
+                let becasChanged = (becasCountDisplayEl.textContent !== data.counts.BECAS.toString()) || (data.counts.recall_unit === 'BECAS');
+
+                if (saeChanged || mineducChanged || becasChanged) {
+                    audio.currentTime = 0;
+                    audio.play();
+
+                    // Animación breve de los paneles
+                    if (saeChanged) {
+                        const panel = document.querySelector('.panel.sae');
+                        panel.style.backgroundColor = '#1e7e34';
+                        setTimeout(() => { panel.style.backgroundColor = ''; }, 600);
+                    }
+                    if (mineducChanged) {
+                        const panel = document.querySelector('.panel.mineduc');
+                        panel.style.backgroundColor = '#d39e00';
+                        setTimeout(() => { panel.style.backgroundColor = ''; }, 600);
+                    }
+                    if (becasChanged) {
+                        const panel = document.querySelector('.panel.becas');
+                        panel.style.backgroundColor = '#117a8b';
+                        setTimeout(() => { panel.style.backgroundColor = ''; }, 600);
+                    }
+                }
+
                 saeCountDisplayEl.textContent = data.counts.SAE;
                 mineducCountDisplayEl.textContent = data.counts.MINEDUC;
                 becasCountDisplayEl.textContent = data.counts.BECAS;

@@ -237,7 +237,6 @@ allRecallButtons.forEach(button => {
         }
 
         const unit = this.dataset.unit;
-        const officialId = this.dataset.officialId;
 
         // Visual feedback
         const originalText = this.textContent;
@@ -250,8 +249,7 @@ allRecallButtons.forEach(button => {
 
         turnoSocket.send(JSON.stringify({
             'type': 'recall_turno',
-            'unit': unit,
-            'official_id': officialId
+            'unit': unit
         }));
     });
 }); 

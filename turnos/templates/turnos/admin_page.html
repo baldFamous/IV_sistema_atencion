@@ -25,11 +25,11 @@
             <h2>SAE</h2>
             <div id="sae-buttons">
                 {% for official in officials_sae %}
-                <div style="margin-bottom: 5px;">
-                    <button data-unit="SAE" data-official-id="{{ official.id }}">{{ official.name }}</button>
-                    <button class="recall-btn" data-unit="SAE" data-official-id="{{ official.id }}" style="background-color: #6c757d; font-size: 0.9em; padding: 5px;">🔊 Repetir</button>
-                </div>
+                <button data-unit="SAE" data-official-id="{{ official.id }}">{{ official.name }}</button>
                 {% endfor %}
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <button class="recall-btn" data-unit="SAE" style="background-color: #6c757d; font-size: 0.9em; padding: 5px 15px; width: 100%;">🔊 Repetir Llamado SAE</button>
             </div>
             <div class="counts-display">
                 <p>Atenciones SAE (hoy): <strong id="sae-count">0</strong></p>
@@ -39,11 +39,11 @@
             <h2>Becas</h2>
             <div id="becas-buttons">
                 {% for official in officials_becas %}
-                <div style="margin-bottom: 5px;">
-                    <button data-unit="BECAS" data-official-id="{{ official.id }}">{{ official.name }}</button>
-                    <button class="recall-btn" data-unit="BECAS" data-official-id="{{ official.id }}" style="background-color: #6c757d; font-size: 0.9em; padding: 5px;">🔊 Repetir</button>
-                </div>
+                <button data-unit="BECAS" data-official-id="{{ official.id }}">{{ official.name }}</button>
                 {% endfor %}
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <button class="recall-btn" data-unit="BECAS" style="background-color: #6c757d; font-size: 0.9em; padding: 5px 15px; width: 100%;">🔊 Repetir Llamado Becas</button>
             </div>
             <div class="counts-display">
                 <p>Atenciones Becas (hoy): <strong id="becas-count">0</strong></p>
@@ -53,11 +53,11 @@
             <h2>Ayuda Mineduc</h2>
             <div id="mineduc-buttons">
                 {% for official in officials_mineduc %}
-                <div style="margin-bottom: 5px;">
-                    <button data-unit="MINEDUC" data-official-id="{{ official.id }}">{{ official.name }}</button>
-                    <button class="recall-btn" data-unit="MINEDUC" data-official-id="{{ official.id }}" style="background-color: #6c757d; font-size: 0.9em; padding: 5px;">🔊 Repetir</button>
-                </div>
+                <button data-unit="MINEDUC" data-official-id="{{ official.id }}">{{ official.name }}</button>
                 {% endfor %}
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <button class="recall-btn" data-unit="MINEDUC" style="background-color: #6c757d; font-size: 0.9em; padding: 5px 15px; width: 100%;">🔊 Repetir Llamado Mineduc</button>
             </div>
             <div class="counts-display">
                 <p>Atenciones Ayuda Mineduc (hoy): <strong id="mineduc-count">0</strong></p>

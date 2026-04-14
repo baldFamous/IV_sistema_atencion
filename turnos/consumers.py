@@ -105,20 +105,12 @@ class TurnoConsumer(AsyncWebsocketConsumer):
                     )
             elif action_type == 'recall_turno':
                 unit = data.get('unit')
-                official_id = int(data.get('official_id', 0))
                 
-                # Fetch current counts and override the module to force the sound/highlight
+                # Fetch current counts
                 current_counts = await asyncio.wait_for(
                     sync_to_async(get_current_day_counts)(),
                     timeout=self.TIMEOUT
                 )
-                
-                if unit == 'SAE':
-                    current_counts['SAE_module'] = official_id
-                elif unit == 'MINEDUC':
-                    current_counts['MINEDUC_module'] = official_id
-                elif unit == 'BECAS':
-                    current_counts['BECAS_module'] = official_id
 
                 current_counts['recall'] = True
                 current_counts['recall_unit'] = unit
