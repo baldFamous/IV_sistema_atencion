@@ -43,3 +43,5 @@ htmlcov/
 
 # Archivos de node (si existieran)
 node_modules/ 
+
+nohup.out
