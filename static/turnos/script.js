@@ -10,6 +10,11 @@ const operationalStatusDisplayEl = document.getElementById('operational-status-d
 const currentTimeDisplayEl = document.getElementById('current-time-display');
 
 let systemIsOperational = SYSTEM_OPERATIONAL;
+const isDisplayPage = document.getElementById('display-page');
+const beepAudio = isDisplayPage ? new Audio(beepUrl) : null;
+
+let lastSaeCount = null;
+let lastMineducCount = null;
 
 // Mantener un registro de los botones que están en proceso de conteo
 const activeCountdowns = new Map();
@@ -90,8 +95,38 @@ turnoSocket.onmessage = function(e) {
     console.log('Mensaje recibido:', data);
 
     if (data.type === 'update_counts') {
+        // Detectar cambios y reproducir beep solo si cambia el número y estamos en display_page
+        let saeChanged = lastSaeCount !== null && lastSaeCount !== data.counts.SAE;
+        let mineducChanged = lastMineducCount !== null && lastMineducCount !== data.counts.MINEDUC;
+
         saeCountEl.textContent = data.counts.SAE;
         mineducCountEl.textContent = data.counts.MINEDUC;
+
+        if (isDisplayPage && saeChanged) {
+            beepAudio.currentTime = 0;
+            beepAudio.play();
+            saeCountEl.style.transition = 'background 0.3s, color 0.3s';
+            saeCountEl.style.background = '#ffe066';
+            saeCountEl.style.color = '#333';
+            setTimeout(() => {
+                saeCountEl.style.background = '';
+                saeCountEl.style.color = '';
+            }, 600);
+        }
+        if (isDisplayPage && mineducChanged) {
+            beepAudio.currentTime = 0;
+            beepAudio.play();
+            mineducCountEl.style.transition = 'background 0.3s, color 0.3s';
+            mineducCountEl.style.background = '#b2f2ff';
+            mineducCountEl.style.color = '#333';
+            setTimeout(() => {
+                mineducCountEl.style.background = '';
+                mineducCountEl.style.color = '';
+            }, 600);
+        }
+        lastSaeCount = data.counts.SAE;
+        lastMineducCount = data.counts.MINEDUC;
+
         systemIsOperational = data.counts.is_operational;
         statusEl.textContent = data.counts.message || (systemIsOperational ? 'Conteos actualizados.' : 'Fuera de horario.');
         statusEl.style.display = 'block';

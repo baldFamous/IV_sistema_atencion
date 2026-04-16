@@ -7,14 +7,14 @@ def admin_page(request):
 
     context = {
         'officials_sae': [
-            {'id': 1, 'name': 'Funcionario SAE 1'},
-            {'id': 2, 'name': 'Funcionario SAE 2'},
-            {'id': 3, 'name': 'Funcionario SAE 3'},
+            {'id': 1, 'name': 'SAE 1 (MODULO 1)'},
+            {'id': 2, 'name': 'SAE 2 (MODULO 2)'},
+            {'id': 3, 'name': 'SAE 3 (MODULO 3)'},
         ],
         'officials_mineduc': [
-            {'id': 4, 'name': 'Funcionario Ayuda Mineduc 1'},
-            {'id': 5, 'name': 'Funcionario Ayuda Mineduc 2'},
-            {'id': 6, 'name': 'Funcionario Ayuda Mineduc 3'},
+            {'id': 4, 'name': 'Ayuda Mineduc 1 (MODULO 4)'},
+            {'id': 5, 'name': 'Ayuda Mineduc 2 (MODULO 5)'},
+            {'id': 6, 'name': 'Ayuda Mineduc 3 (MODULO 6)'},
         ],
         'is_operational_initial': op_info_sync["is_operational"],
         'current_time_initial_str': op_info_sync["current_time_target_tz"].strftime('%Y-%m-%d %H:%M:%S %Z'),

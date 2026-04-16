@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,8 +11,8 @@
         .info-header p { margin: 5px; }
         .container { display: flex; width: 90%; max-width: 1200px; height: 70%; max-height: 600px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); border-radius: 10px; overflow: hidden;}
         .panel { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-size: 2.5vw; /* Responsive font size */ padding: 20px; transition: background-color 0.5s ease; }
-        .sae { background-color: #28a745; /* Verde */ }
-        .mineduc { background-color: #ffc107; /* Amarillo */ color: #333; /* Texto oscuro para mejor contraste */ }
+        .sae { background-color: #fcf805; color: #333 /* Verde */ }
+        .mineduc { background-color: #51fcf7; /* Amarillo */ color: #333; /* Texto oscuro para mejor contraste */ }
         .panel h2 { font-size: calc(1.5em + 1vw); /* Título más grande y responsive */ margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
         .panel p.count { font-size: calc(4em + 2vw); /* Contador muy grande y responsive */ font-weight: bold; margin: 0; line-height: 1; }
         .status-footer { position: absolute; bottom: 10px; left: 10px; background-color: rgba(255,255,255,0.9); padding: 8px 12px; border-radius: 5px; font-size: 0.9em; color: #333; border: 1px solid #ccc;}
@@ -32,10 +33,9 @@
         }
     </style>
 </head>
-<body>
+<body id="display-page">
     <div class="info-header">
         <p>Sistema de Atención al Público</p>
-        <p id="system-status-public">Cargando estado del sistema...</p>
     </div>
 
     <div class="container">
@@ -71,7 +71,10 @@
 
         turnoSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
+	    const beepUrl = "{% static 'beep.mp3' %}";
+	    const audio = new Audio(beepUrl)
             if (data.type === 'update_counts') {
+		audio.play();
                 saeCountDisplayEl.textContent = data.counts.SAE;
                 mineducCountDisplayEl.textContent = data.counts.MINEDUC;
                 
@@ -87,13 +90,6 @@
                     mineducModuleDisplayEl.textContent = '';
                 }
 
-                if (data.counts.is_operational === false) {
-                    systemStatusPublicEl.textContent = data.counts.message || 'Sistema fuera de horario. Los contadores se muestran en 0.';
-                    systemStatusPublicEl.style.color = 'red';
-                } else {
-                    systemStatusPublicEl.textContent = data.counts.message || 'Sistema operacional. Contadores actualizados.';
-                    systemStatusPublicEl.style.color = 'green';
-                }
                 statusFooterEl.textContent = 'Última actualización recibida.';
             }
         };
@@ -119,5 +115,6 @@
             mineducCountDisplayEl.textContent = 'X';
         }
     </script>
+    <script src="{% static 'turnos/script.js' %}"></script>
 </body>
 </html>

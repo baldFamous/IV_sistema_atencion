@@ -30,7 +30,7 @@ def get_operational_datetime_info():
     )
     # Hora de fin operacional: 15:00:00 del día actual en GMT-4
     end_op_dt_target_tz = target_tz.localize(
-        datetime.datetime.combine(operational_date_target_tz, datetime.time(15, 00, 0))
+        datetime.datetime.combine(operational_date_target_tz, datetime.time(18, 00, 0))
     )
 
     is_operational_hours = current_time_target_tz < end_op_dt_target_tz

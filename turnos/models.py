@@ -9,8 +9,8 @@ class Atencion(models.Model):
     ]
     # IDs de funcionarios: 1,2,3 para SAE; 4,5,6 para Ayuda Mineduc
     OFFICIAL_CHOICES = [
-        (1, 'Funcionario SAE 1'), (2, 'Funcionario SAE 2'), (3, 'Funcionario SAE 3'),
-        (4, 'Funcionario Ayuda Mineduc 1'), (5, 'Funcionario Ayuda Mineduc 2'), (6, 'Funcionario Ayuda Mineduc 3'),
+        (1, 'Funcionario SAE 1 (MODULO 1)'), (2, 'Funcionario SAE 2 (MODULO 2)'), (3, 'Funcionario SAE 3 (MODULO 3)'),
+        (4, 'Funcionario Ayuda Mineduc 1 (MODULO 4)'), (5, 'Funcionario Ayuda Mineduc 2 (MODULO 5)'), (6, 'Funcionario Ayuda Mineduc 3 (MODULO 6)'),
     ]
 
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES, verbose_name="Unidad")
