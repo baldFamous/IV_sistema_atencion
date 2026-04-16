@@ -28,8 +28,25 @@
                 <button data-unit="SAE" data-official-id="{{ official.id }}">{{ official.name }}</button>
                 {% endfor %}
             </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <button class="recall-btn" data-unit="SAE" style="background-color: #6c757d; font-size: 0.9em; padding: 5px 15px; width: 100%;">🔊 Repetir Llamado SAE</button>
+            </div>
             <div class="counts-display">
                 <p>Atenciones SAE (hoy): <strong id="sae-count">0</strong></p>
+            </div>
+        </div>
+        <div class="unit-section" id="becas-section">
+            <h2>Becas</h2>
+            <div id="becas-buttons">
+                {% for official in officials_becas %}
+                <button data-unit="BECAS" data-official-id="{{ official.id }}">{{ official.name }}</button>
+                {% endfor %}
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <button class="recall-btn" data-unit="BECAS" style="background-color: #6c757d; font-size: 0.9em; padding: 5px 15px; width: 100%;">🔊 Repetir Llamado Becas</button>
+            </div>
+            <div class="counts-display">
+                <p>Atenciones Becas (hoy): <strong id="becas-count">0</strong></p>
             </div>
         </div>
         <div class="unit-section" id="mineduc-section">
@@ -39,6 +56,9 @@
                 <button data-unit="MINEDUC" data-official-id="{{ official.id }}">{{ official.name }}</button>
                 {% endfor %}
             </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <button class="recall-btn" data-unit="MINEDUC" style="background-color: #6c757d; font-size: 0.9em; padding: 5px 15px; width: 100%;">🔊 Repetir Llamado Mineduc</button>
+            </div>
             <div class="counts-display">
                 <p>Atenciones Ayuda Mineduc (hoy): <strong id="mineduc-count">0</strong></p>
             </div>
@@ -47,6 +67,7 @@
 
     <script>
         const SYSTEM_OPERATIONAL = {{ is_operational_initial|yesno:"true,false" }};
+        let lastBecasCount = null;
     </script>
     <script>
         // Verificar que el script se cargue
