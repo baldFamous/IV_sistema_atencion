@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django.db.models import Count
-from .models import Atencion
+from .models import Atencion, Recepcion
 import datetime
 import pytz
 
@@ -30,7 +30,7 @@ def get_operational_datetime_info():
     )
     # Hora de fin operacional: 15:00:00 del día actual en GMT-4
     end_op_dt_target_tz = target_tz.localize(
-        datetime.datetime.combine(operational_date_target_tz, datetime.time(15, 00, 0))
+        datetime.datetime.combine(operational_date_target_tz, datetime.time(18, 00, 0))
     )
 
     is_operational_hours = current_time_target_tz < end_op_dt_target_tz
@@ -49,16 +49,20 @@ def get_operational_datetime_info():
 
 def get_current_day_counts():
     """
-    Calcula los conteos para SAE y Ayuda Mineduc para el día operacional actual.
+    Calcula los conteos para SAE, Ayuda Mineduc y Becas para el día operacional actual.
     Si está fuera de horario, los contadores son 0.
     """
     op_info = get_operational_datetime_info()
 
     if not op_info["is_operational"]:
         return {
-            'SAE': 0, 'MINEDUC': 0,
+            'SAE': 0, 'MINEDUC': 0, 'BECAS': 0,
             'SAE_module': None,
             'MINEDUC_module': None,
+            'BECAS_module': None,
+            'SAE_waiting': 0,
+            'MINEDUC_waiting': 0,
+            'BECAS_waiting': 0,
             'is_operational': False,
             'message': f"Fuera de horario de atención (después de las {op_info['operational_cutoff_time_str']})."
         }
@@ -76,6 +80,12 @@ def get_current_day_counts():
         timestamp__lt=op_info["query_end_utc"]
     ).order_by('-timestamp').first()
 
+    latest_becas = Atencion.objects.filter(
+        unit='BECAS',
+        timestamp__gte=op_info["query_start_utc"],
+        timestamp__lt=op_info["query_end_utc"]
+    ).order_by('-timestamp').first()
+
     # Contar registros dentro de la ventana operacional actual
     counts_data = Atencion.objects.filter(
         timestamp__gte=op_info["query_start_utc"],
@@ -84,20 +94,46 @@ def get_current_day_counts():
 
     sae_total = 0
     mineduc_total = 0
+    becas_total = 0
     for item in counts_data:
         if item['unit'] == 'SAE':
             sae_total = item['total']
         elif item['unit'] == 'MINEDUC':
             mineduc_total = item['total']
+        elif item['unit'] == 'BECAS':
+            becas_total = item['total']
+
+    # Contar registros de recepción dentro de la ventana operacional actual
+    recepcion_data = Recepcion.objects.filter(
+        timestamp__gte=op_info["query_start_utc"],
+        timestamp__lt=op_info["query_end_utc"]
+    ).values('unit').annotate(total=Count('id'))
+
+    sae_recepcion = 0
+    mineduc_recepcion = 0
+    becas_recepcion = 0
+    for item in recepcion_data:
+        if item['unit'] == 'SAE':
+            sae_recepcion = item['total']
+        elif item['unit'] == 'MINEDUC':
+            mineduc_recepcion = item['total']
+        elif item['unit'] == 'BECAS':
+            becas_recepcion = item['total']
 
     return {
         'SAE': sae_total,
         'MINEDUC': mineduc_total,
+        'BECAS': becas_total,
         'SAE_module': latest_sae.official_id if latest_sae else None,
         'MINEDUC_module': latest_mineduc.official_id if latest_mineduc else None,
+        'BECAS_module': latest_becas.official_id if latest_becas else None,
+        'SAE_waiting': max(0, sae_recepcion - sae_total),
+        'MINEDUC_waiting': max(0, mineduc_recepcion - mineduc_total),
+        'BECAS_waiting': max(0, becas_recepcion - becas_total),
         'is_operational': True,
         'message': f"En horario de atención (hasta las {op_info['operational_cutoff_time_str']})."
     }
+
 
 def record_atencion_if_operational(unit, official_id_str):
     """
@@ -116,9 +152,27 @@ def record_atencion_if_operational(unit, official_id_str):
     # Validar que el official_id corresponda a la unidad
     is_sae_official = unit == 'SAE' and official_id in [1, 2, 3]
     is_mineduc_official = unit == 'MINEDUC' and official_id in [4, 5, 6]
+    is_becas_official = unit == 'BECAS' and official_id in [7, 8, 9]
 
-    if not (is_sae_official or is_mineduc_official):
+    if not (is_sae_official or is_mineduc_official or is_becas_official):
         return False, f"ID de funcionario {official_id} no es válido para la unidad {unit}."
 
     Atencion.objects.create(unit=unit, official_id=official_id) # timestamp se guarda en UTC
     return True, "Atención registrada exitosamente."
+
+
+def record_recepcion_if_operational(unit):
+    """
+    Registra una recepción si está dentro del horario operacional.
+    Devuelve (True, mensaje_exito) o (False, mensaje_error).
+    """
+    op_info = get_operational_datetime_info()
+    if not op_info["is_operational"]:
+        return False, f"No se registró. Fuera de horario (límite {op_info['operational_cutoff_time_str']})."
+
+    valid_units = ['SAE', 'MINEDUC', 'BECAS']
+    if unit not in valid_units:
+        return False, f"Unidad {unit} no válida."
+
+    Recepcion.objects.create(unit=unit) # timestamp en UTC
+    return True, "Recepción registrada exitosamente."

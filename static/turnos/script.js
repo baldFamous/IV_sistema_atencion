@@ -8,11 +8,19 @@ const mineducCountEl = document.getElementById('mineduc-count');
 const allActionButtons = document.querySelectorAll('button[data-official-id]');
 const operationalStatusDisplayEl = document.getElementById('operational-status-display');
 const currentTimeDisplayEl = document.getElementById('current-time-display');
+const becasCountEl = document.getElementById('becas-count');
+const allRecallButtons = document.querySelectorAll('.recall-btn');
 
 let systemIsOperational = SYSTEM_OPERATIONAL;
 
 // Mantener un registro de los botones que están en proceso de conteo
 const activeCountdowns = new Map();
+
+// Inicializar audio beep
+const beepAudio = new Audio('/static/beep.mp3');
+
+let lastSaeCount = null;
+let lastMineducCount = null;
 
 function updateButtonStates() {
     allActionButtons.forEach(button => {
@@ -90,8 +98,53 @@ turnoSocket.onmessage = function(e) {
     console.log('Mensaje recibido:', data);
 
     if (data.type === 'update_counts') {
+        // Detectar cambios y reproducir beep solo si cambia el número o hay un recall
+        let saeChanged = (lastSaeCount !== null && lastSaeCount !== data.counts.SAE) || (data.counts.recall_unit === 'SAE');
+        let mineducChanged = (lastMineducCount !== null && lastMineducCount !== data.counts.MINEDUC) || (data.counts.recall_unit === 'MINEDUC');
+        let becasChanged = (typeof lastBecasCount !== 'undefined' && lastBecasCount !== null && lastBecasCount !== data.counts.BECAS) || (data.counts.recall_unit === 'BECAS');
+
         saeCountEl.textContent = data.counts.SAE;
         mineducCountEl.textContent = data.counts.MINEDUC;
+        becasCountEl && (becasCountEl.textContent = data.counts.BECAS);
+
+        const isDisplayPage = document.getElementById('display-page') !== null;
+
+        if (isDisplayPage && saeChanged) {
+            beepAudio.currentTime = 0;
+            beepAudio.play();
+            saeCountEl.style.transition = 'background 0.3s, color 0.3s';
+            saeCountEl.style.background = '#bfc94a'; // Tono más oscuro SAE
+            saeCountEl.style.color = '#333';
+            setTimeout(() => {
+                saeCountEl.style.background = '';
+                saeCountEl.style.color = '';
+            }, 600);
+        }
+        if (isDisplayPage && mineducChanged) {
+            beepAudio.currentTime = 0;
+            beepAudio.play();
+            mineducCountEl.style.transition = 'background 0.3s, color 0.3s';
+            mineducCountEl.style.background = '#3bb6c6'; // Tono más oscuro MINEDUC
+            mineducCountEl.style.color = '#333';
+            setTimeout(() => {
+                mineducCountEl.style.background = '';
+                mineducCountEl.style.color = '';
+            }, 600);
+        }
+        if (isDisplayPage && becasChanged && becasCountEl) {
+            beepAudio.currentTime = 0;
+            beepAudio.play();
+            becasCountEl.style.transition = 'background 0.3s, color 0.3s';
+            becasCountEl.style.background = '#da1d79';
+            becasCountEl.style.color = '#fff';
+            setTimeout(() => {
+                becasCountEl.style.background = '';
+                becasCountEl.style.color = '';
+            }, 600);
+        }
+        lastSaeCount = data.counts.SAE;
+        lastMineducCount = data.counts.MINEDUC;
+        if(typeof lastBecasCount !== 'undefined') lastBecasCount = data.counts.BECAS;
         systemIsOperational = data.counts.is_operational;
         statusEl.textContent = data.counts.message || (systemIsOperational ? 'Conteos actualizados.' : 'Fuera de horario.');
         statusEl.style.display = 'block';
@@ -160,6 +213,43 @@ allActionButtons.forEach(button => {
             'type': 'increment_turno',
             'unit': unit,
             'official_id': officialId
+        }));
+    });
+});
+
+allRecallButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Botón de repetir clickeado:', this.dataset.unit);
+
+        if (!systemIsOperational) {
+            errorEl.textContent = "Acción no permitida: El sistema está fuera de horario.";
+            errorEl.style.display = 'block';
+            setTimeout(() => { errorEl.style.display = 'none'; }, 3000);
+            return;
+        }
+
+        if (turnoSocket.readyState !== WebSocket.OPEN) {
+            errorEl.textContent = "No conectado al servidor. Intente de nuevo más tarde.";
+            errorEl.style.display = 'block';
+            setTimeout(() => { errorEl.style.display = 'none'; }, 3000);
+            return;
+        }
+
+        const unit = this.dataset.unit;
+
+        // Visual feedback
+        const originalText = this.textContent;
+        this.textContent = "🔊 Sonando...";
+        this.disabled = true;
+        setTimeout(() => {
+            this.textContent = originalText;
+            this.disabled = false;
+        }, 1500);
+
+        turnoSocket.send(JSON.stringify({
+            'type': 'recall_turno',
+            'unit': unit
         }));
     });
 }); 
