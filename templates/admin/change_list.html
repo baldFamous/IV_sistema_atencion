@@ -1,0 +1,20 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_list %}
+
+{% block filters %}
+  {% if cl.has_filters %}
+    <div id="changelist-filter">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h2>{% translate 'Filtrar por' %}</h2>
+        {% if cl.has_active_filters %}
+          <h3 id="changelist-filter-clear">
+            <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Limpiar todos los filtros" %}</a>
+          </h3>
+        {% endif %}
+      </div>
+      <div class="filter-categories-wrapper">
+        {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
