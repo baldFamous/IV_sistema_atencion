@@ -1,0 +1,257 @@
+/* General Admin Resets & Premium Aesthetics */
+:root {
+    --primary: #1F2937;
+    --secondary: #4B5563;
+    --accent: #2563EB;
+    --accent-hover: #1D4ED8;
+    --bg-color: #F3F4F6;
+    --card-bg: #FFFFFF;
+    --border-color: #E5E7EB;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --radius-lg: 12px;
+    --radius-md: 8px;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: var(--font-family);
+    color: var(--primary);
+}
+
+/* Header Re-styling */
+#header {
+    background-color: var(--primary) !important;
+    padding: 15px 30px;
+    box-shadow: var(--shadow-md);
+}
+
+#branding h1, #branding h1 a:link, #branding h1 a:visited {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.5rem;
+    letter-spacing: -0.025em;
+}
+
+#user-tools {
+    font-weight: 500;
+}
+
+#user-tools a {
+    color: #9CA3AF;
+    transition: color 0.2s;
+}
+
+#user-tools a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Modifying the Changelist Container to put filters at the top */
+#changelist {
+    display: flex;
+    flex-direction: column; /* Stack vertically! */
+    margin-bottom: 2rem;
+}
+
+/* The Table Container */
+.changelist-form-container {
+    order: 2; /* Ensure it comes AFTER the filters */
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    padding: 20px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* TOP FILTERS DESIGN - "Sub Espacios" */
+/* -------------------------------------------------------------------------- */
+
+#changelist-filter {
+    order: 1; /* Ensure it is top positioned */
+    width: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 0 25px 0 !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Remove floating sidebar layout */
+}
+
+/* "Filter" Header */
+#changelist-filter > h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 15px;
+    background: transparent;
+    padding: 0;
+    text-transform: none;
+    letter-spacing: normal;
+    border: none;
+}
+
+/* Clear filters link */
+#changelist-filter-clear {
+    margin-bottom: 15px;
+    display: inline-block;
+}
+#changelist-filter-clear a {
+    background: #eef2ff;
+    color: var(--accent);
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+#changelist-filter-clear a:hover {
+    background: #e0e7ff;
+}
+
+/* 
+    The flex container for all filter segments.
+    We inject a wrapper around the <details> using our custom HTML override,
+    so we can grid/flex them smoothly 
+*/
+.filter-categories-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Filter Sub-Spaces (Individual Cards) */
+/* Django 4 uses details/summary for filters */
+#changelist-filter details {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    min-width: 220px;
+    flex: 1 1 auto;
+    overflow: hidden;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+#changelist-filter details:hover {
+    box-shadow: var(--shadow-md);
+    border-color: #cbd5e1;
+}
+
+#changelist-filter details[open] {
+    padding-bottom: 5px;
+}
+
+#changelist-filter summary {
+    background: #f8fafc;
+    padding: 12px 15px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--primary);
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+#changelist-filter summary:hover {
+    background: #f1f5f9;
+}
+#changelist-filter details[open] summary {
+    border-bottom-color: var(--border-color);
+}
+
+/* Filter Option Lists */
+#changelist-filter ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px;
+}
+#changelist-filter li {
+    margin: 5px 0;
+    font-size: 0.85rem;
+}
+#changelist-filter li a {
+    display: block;
+    padding: 6px 10px;
+    color: var(--secondary);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+#changelist-filter li a:hover {
+    background: #f3f4f6;
+    color: var(--primary);
+}
+
+/* Active filter state */
+#changelist-filter li.selected a {
+    color: #fff;
+    background: var(--accent);
+    font-weight: 500;
+}
+#changelist-filter li.selected a:hover {
+    background: var(--accent-hover);
+}
+
+/* Support for older django versions where filters are h3 + ul */
+#changelist-filter h3 {
+    background: var(--card-bg);
+    margin: 0;
+    padding: 12px 15px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--primary);
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
+}
+#changelist-filter h3 + ul {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    min-width: 220px;
+    margin-right: 20px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+input[type=submit], button.button, .submit-row input {
+    background: var(--accent) !important;
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    font-weight: 500;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.2s !important;
+    text-transform: none;
+    box-shadow: var(--shadow-sm);
+}
+
+input[type=submit]:hover, button.button:hover, .submit-row input:hover {
+    background: var(--accent-hover) !important;
+}
+
+/* Search bar styling tweaks */
+#toolbar form input[type="text"] {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    width: 300px;
+    font-size: 0.9rem;
+}
+#toolbar form input[type="submit"] {
+    padding: 8px 15px;
+    margin-left: 8px;
+}
