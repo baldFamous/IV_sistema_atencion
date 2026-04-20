@@ -161,6 +161,27 @@
             mineducCountDisplayEl.textContent = 'X';
             becasCountDisplayEl.textContent = 'X';
         }
+
+        // --- Recarga Automática Diaria a las 08:45 AM ---
+        function scheduleRefresh() {
+            const now = new Date();
+            const refreshTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 45, 0, 0); // 08:45:00
+            
+            let timeUntilRefresh = refreshTime - now;
+            
+            // Si ya pasaron las 08:45 de hoy, se programa para mañana
+            if (timeUntilRefresh < 0) {
+                timeUntilRefresh += 86400000; // 24 horas en milisegundos
+            }
+            
+            setTimeout(function() {
+                window.location.reload(true);
+            }, timeUntilRefresh);
+        }
+        
+        // Iniciar la programación al cargar la página
+        scheduleRefresh();
+
     </script>
 </body>
 </html>
