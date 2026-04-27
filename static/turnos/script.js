@@ -214,8 +214,61 @@ allActionButtons.forEach(button => {
             'unit': unit,
             'official_id': officialId
         }));
+
+        // Abrir modal de atención
+        const modal = document.getElementById('atencion-modal');
+        if (modal) {
+            document.getElementById('modal-unit').value = unit;
+            document.getElementById('modal-official-id').value = officialId;
+            modal.style.display = 'block';
+        }
     });
 });
+
+// Lógica del modal
+const modal = document.getElementById('atencion-modal');
+const btnCancel = document.getElementById('btn-cancel-modal');
+const formAtencion = document.getElementById('atencion-form');
+
+if (btnCancel && modal) {
+    btnCancel.addEventListener('click', () => {
+        modal.style.display = 'none';
+        formAtencion.reset();
+    });
+}
+
+if (formAtencion) {
+    formAtencion.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        
+        fetch('/api/registrar-atencion/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === 'success') {
+                statusEl.textContent = 'Atención registrada correctamente.';
+                statusEl.style.display = 'block';
+                setTimeout(() => { statusEl.style.display = 'none'; }, 3000);
+                modal.style.display = 'none';
+                formAtencion.reset();
+            } else {
+                alert('Error al registrar atención: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error de conexión al registrar atención.');
+        });
+    });
+}
 
 allRecallButtons.forEach(button => {
     button.addEventListener('click', function(e) {

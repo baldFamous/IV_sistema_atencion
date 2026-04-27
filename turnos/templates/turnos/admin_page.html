@@ -65,6 +65,51 @@
         </div>
     </div>
 
+    <!-- Modal Registro Atención -->
+    <div id="atencion-modal" class="modal">
+        <div class="modal-content">
+            <h2>Registro de Atención</h2>
+            <form id="atencion-form">
+                <input type="hidden" id="modal-unit" name="unit">
+                <input type="hidden" id="modal-official-id" name="official_id">
+                
+                <label for="modal-nombre">Nombre del Usuario:</label>
+                <input type="text" id="modal-nombre" name="nombre_usuario">
+                
+                <label for="modal-rut">RUT:</label>
+                <input type="text" id="modal-rut" name="rut_usuario" placeholder="Ej: 12345678-9">
+                
+                <label for="modal-tramite">Trámite:</label>
+                <select id="modal-tramite" name="tramite" required>
+                    <option value="">-- Seleccione --</option>
+                    <option value="cambio_establecimiento">Cambio de establecimiento</option>
+                    <option value="solicita_establecimiento">Solicita establecimiento</option>
+                    <option value="reclamo">Reclamo</option>
+                    <option value="consulta_general">Consulta general</option>
+                    <option value="otro">Otro</option>
+                </select>
+                
+                <label for="modal-respuesta">Respuesta:</label>
+                <select id="modal-respuesta" name="respuesta" required>
+                    <option value="">-- Seleccione --</option>
+                    <option value="realizo_solicitado">Realizó lo solicitado</option>
+                    <option value="no_disponible">Solicitud no disponible</option>
+                    <option value="se_deriva">Se deriva</option>
+                    <option value="informacion_entregada">Información entregada</option>
+                    <option value="otro">Otro</option>
+                </select>
+                
+                <label for="modal-observaciones">Observaciones (Opcional):</label>
+                <textarea id="modal-observaciones" name="observaciones" rows="3"></textarea>
+                
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" id="btn-cancel-modal">Cancelar</button>
+                    <button type="submit" class="btn-save">Guardar Atención</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         const SYSTEM_OPERATIONAL = {{ is_operational_initial|yesno:"true,false" }};
         let lastBecasCount = null;

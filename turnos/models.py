@@ -48,4 +48,42 @@ class Recepcion(models.Model):
     class Meta:
         verbose_name = "Registro de Recepción"
         verbose_name_plural = "Registros de Recepción"
+        ordering = ['-timestamp']
+
+class RegistroAtencionDetalle(models.Model):
+    TRAMITE_CHOICES = [
+        ('cambio_establecimiento', 'Cambio de establecimiento'),
+        ('solicita_establecimiento', 'Solicita establecimiento'),
+        ('reclamo', 'Reclamo'),
+        ('consulta_general', 'Consulta general'),
+        ('otro', 'Otro'),
+    ]
+
+    RESPUESTA_CHOICES = [
+        ('realizo_solicitado', 'Realizó lo solicitado'),
+        ('no_disponible', 'Solicitud no disponible'),
+        ('se_deriva', 'Se deriva'),
+        ('informacion_entregada', 'Información entregada'),
+        ('otro', 'Otro'),
+    ]
+
+    unit = models.CharField(max_length=10, choices=Atencion.UNIT_CHOICES, verbose_name="Unidad")
+    official_id = models.IntegerField(choices=Atencion.OFFICIAL_CHOICES, verbose_name="ID Funcionario")
+    nombre_usuario = models.CharField(max_length=150, verbose_name="Nombre del Usuario", blank=True, null=True)
+    rut_usuario = models.CharField(max_length=20, verbose_name="RUT", blank=True, null=True)
+    tramite = models.CharField(max_length=50, choices=TRAMITE_CHOICES, verbose_name="Trámite")
+    respuesta = models.CharField(max_length=50, choices=RESPUESTA_CHOICES, verbose_name="Respuesta")
+    observaciones = models.TextField(blank=True, null=True, verbose_name="Observaciones")
+    timestamp = models.DateTimeField(default=timezone.now, verbose_name="Fecha y Hora (UTC)")
+
+    def __str__(self):
+        return f"Detalle Atención {self.get_unit_display()} - Funcionario {self.official_id} - {self.rut_usuario}"
+
+    def timestamp_gmt_minus_4(self):
+        gmt_minus_4_tz = pytz.timezone('Etc/GMT+4')
+        return self.timestamp.astimezone(gmt_minus_4_tz)
+
+    class Meta:
+        verbose_name = "Detalle de Atención"
+        verbose_name_plural = "Detalles de Atención"
         ordering = ['-timestamp']
