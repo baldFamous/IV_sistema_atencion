@@ -244,7 +244,7 @@ if (formAtencion) {
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
         
-        fetch('/api/registrar-atencion/', {
+        fetch('/atencion/api/registrar-atencion/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
