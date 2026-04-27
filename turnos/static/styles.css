@@ -62,24 +62,39 @@ body {
 }
 
 #sae-buttons button { 
-    background-color: #28a745; 
+    background-color: #ffc107; 
+    color: #333;
 }
 
 #sae-buttons button:hover:not(:disabled) { 
-    background-color: #1e7e34; 
+    background-color: #e0a800; 
 }
 
 #sae-buttons button:disabled { 
     background-color: #dc3545; 
+    color: white;
+}
+
+#becas-buttons button {
+    background-color: #d81b60;
+    color: white;
+}
+
+#becas-buttons button:hover:not(:disabled) {
+    background-color: #ad1457;
+}
+
+#becas-buttons button:disabled {
+    background-color: #dc3545;
 }
 
 #mineduc-buttons button { 
-    background-color: #ffc107; 
+    background-color: #00bcd4; 
     color: #333; 
 }
 
 #mineduc-buttons button:hover:not(:disabled) { 
-    background-color: #e0a800; 
+    background-color: #0097a7; 
 }
 
 #mineduc-buttons button:disabled { 

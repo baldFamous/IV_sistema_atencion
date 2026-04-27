@@ -64,10 +64,14 @@ function startButtonCountdown(button, unit) {
             if (systemIsOperational) {
                 button.disabled = false;
                 if (unit === 'SAE') {
-                    button.style.backgroundColor = '#28a745';
-                } else if (unit === 'MINEDUC') {
                     button.style.backgroundColor = '#ffc107';
                     button.style.color = '#333';
+                } else if (unit === 'MINEDUC') {
+                    button.style.backgroundColor = '#00bcd4';
+                    button.style.color = '#333';
+                } else if (unit === 'BECAS') {
+                    button.style.backgroundColor = '#d81b60';
+                    button.style.color = 'white';
                 }
                 button.style.opacity = '1';
             }
@@ -113,7 +117,7 @@ turnoSocket.onmessage = function(e) {
             beepAudio.currentTime = 0;
             beepAudio.play();
             saeCountEl.style.transition = 'background 0.3s, color 0.3s';
-            saeCountEl.style.background = '#bfc94a'; // Tono más oscuro SAE
+            saeCountEl.style.background = '#e0a800'; // Tono más oscuro SAE
             saeCountEl.style.color = '#333';
             setTimeout(() => {
                 saeCountEl.style.background = '';
@@ -124,8 +128,8 @@ turnoSocket.onmessage = function(e) {
             beepAudio.currentTime = 0;
             beepAudio.play();
             mineducCountEl.style.transition = 'background 0.3s, color 0.3s';
-            mineducCountEl.style.background = '#3bb6c6'; // Tono más oscuro MINEDUC
-            mineducCountEl.style.color = '#333';
+            mineducCountEl.style.background = '#0097a7'; // Tono más oscuro MINEDUC
+            mineducCountEl.style.color = '#fff';
             setTimeout(() => {
                 mineducCountEl.style.background = '';
                 mineducCountEl.style.color = '';
@@ -135,7 +139,7 @@ turnoSocket.onmessage = function(e) {
             beepAudio.currentTime = 0;
             beepAudio.play();
             becasCountEl.style.transition = 'background 0.3s, color 0.3s';
-            becasCountEl.style.background = '#da1d79';
+            becasCountEl.style.background = '#ad1457';
             becasCountEl.style.color = '#fff';
             setTimeout(() => {
                 becasCountEl.style.background = '';
@@ -215,9 +219,9 @@ allActionButtons.forEach(button => {
             'official_id': officialId
         }));
 
-        // Abrir modal de atención
+        // Abrir modal de atención solo para SAE
         const modal = document.getElementById('atencion-modal');
-        if (modal) {
+        if (modal && unit === 'SAE') {
             document.getElementById('modal-unit').value = unit;
             document.getElementById('modal-official-id').value = officialId;
             modal.style.display = 'block';
