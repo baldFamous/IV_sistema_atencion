@@ -72,18 +72,50 @@
             <form id="atencion-form">
                 <input type="hidden" id="modal-unit" name="unit">
                 <input type="hidden" id="modal-official-id" name="official_id">
-                
-                <label for="modal-nombre">Nombre del Usuario:</label>
-                <input type="text" id="modal-nombre" name="nombre_usuario">
-                
-                <label for="modal-rut">RUT:</label>
-                <input type="text" id="modal-rut" name="rut_usuario" placeholder="Ej: 12345678-9">
+
+                <!-- Card: Datos del Menor -->
+                <div class="menores-card">
+                    <div class="menores-card-header">
+                        <h3>👧 Datos del Menor</h3>
+                        <div class="menores-counter">
+                            <button type="button" id="btn-remove-menor" class="btn-counter" title="Quitar menor">−</button>
+                            <span id="menores-count">1</span>
+                            <button type="button" id="btn-add-menor" class="btn-counter" title="Agregar menor">+</button>
+                        </div>
+                    </div>
+                    <div id="menores-container">
+                        <div class="menor-entry" data-index="0">
+                            <div class="menor-entry-header">Menor 1</div>
+                            <div class="menor-fields">
+                                <div class="field-group">
+                                    <label>RUT del Menor:</label>
+                                    <input type="text" name="menor_rut_0" placeholder="Ej: 12345678-9">
+                                </div>
+                                <div class="field-group">
+                                    <label>Curso del Menor:</label>
+                                    <input type="text" name="menor_curso_0" placeholder="Ej: 1° Básico">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <label for="modal-nombre">Nombre del Apoderado:</label>
+                <input type="text" id="modal-nombre" name="nombre_apoderado">
+
+                <label for="modal-rut">RUT del Apoderado:</label>
+                <input type="text" id="modal-rut" name="rut_apoderado" placeholder="Ej: 12345678-9">
+
+                <label for="modal-telefono">Teléfono del Apoderado:</label>
+                <input type="text" id="modal-telefono" name="telefono_apoderado" placeholder="Ej: +56 9 1234 5678">
                 
                 <label for="modal-tramite">Trámite:</label>
                 <select id="modal-tramite" name="tramite" required>
                     <option value="">-- Seleccione --</option>
                     <option value="cambio_establecimiento">Cambio de establecimiento</option>
                     <option value="solicita_establecimiento">Solicita establecimiento</option>
+                    <option value="cambio_nivel">Cambio de nivel</option>
+                    <option value="apoyo_plataforma">Apoyo en uso de plataforma</option>
                     <option value="reclamo">Reclamo</option>
                     <option value="consulta_general">Consulta general</option>
                     <option value="otro">Otro</option>
@@ -96,7 +128,7 @@
                     <option value="no_disponible">Solicitud no disponible</option>
                     <option value="se_deriva">Se deriva</option>
                     <option value="informacion_entregada">Información entregada</option>
-                    <option value="otro">Otro</option>
+                    <option value="otro">Indicar en observaciones</option>
                 </select>
                 
                 <label for="modal-observaciones">Observaciones (Opcional):</label>

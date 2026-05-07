@@ -53,8 +53,10 @@ def registrar_atencion_detalle(request):
             RegistroAtencionDetalle.objects.create(
                 unit=data.get('unit'),
                 official_id=data.get('official_id'),
-                nombre_usuario=data.get('nombre_usuario', ''),
-                rut_usuario=data.get('rut_usuario', ''),
+                nombre_apoderado=data.get('nombre_apoderado', ''),
+                rut_apoderado=data.get('rut_apoderado', ''),
+                telefono_apoderado=data.get('telefono_apoderado', ''),
+                menores_data=data.get('menores_data', []),
                 tramite=data.get('tramite'),
                 respuesta=data.get('respuesta'),
                 observaciones=data.get('observaciones', '')

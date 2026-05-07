@@ -238,6 +238,61 @@ if (btnCancel && modal) {
     btnCancel.addEventListener('click', () => {
         modal.style.display = 'none';
         formAtencion.reset();
+        resetMenores();
+    });
+}
+
+// === Lógica de Menores ===
+let menoresCount = 1;
+const menoresContainer = document.getElementById('menores-container');
+const menoresCountDisplay = document.getElementById('menores-count');
+const btnAddMenor = document.getElementById('btn-add-menor');
+const btnRemoveMenor = document.getElementById('btn-remove-menor');
+
+function createMenorEntry(index) {
+    const div = document.createElement('div');
+    div.className = 'menor-entry';
+    div.dataset.index = index;
+    div.innerHTML = `
+        <div class="menor-entry-header">Menor ${index + 1}</div>
+        <div class="menor-fields">
+            <div class="field-group">
+                <label>RUT del Menor:</label>
+                <input type="text" name="menor_rut_${index}" placeholder="Ej: 12345678-9">
+            </div>
+            <div class="field-group">
+                <label>Curso del Menor:</label>
+                <input type="text" name="menor_curso_${index}" placeholder="Ej: 1° Básico">
+            </div>
+        </div>
+    `;
+    return div;
+}
+
+function resetMenores() {
+    menoresCount = 1;
+    if (menoresCountDisplay) menoresCountDisplay.textContent = '1';
+    if (menoresContainer) {
+        menoresContainer.innerHTML = '';
+        menoresContainer.appendChild(createMenorEntry(0));
+    }
+}
+
+if (btnAddMenor) {
+    btnAddMenor.addEventListener('click', () => {
+        if (menoresCount >= 10) return; // Límite máximo
+        menoresContainer.appendChild(createMenorEntry(menoresCount));
+        menoresCount++;
+        menoresCountDisplay.textContent = menoresCount;
+    });
+}
+
+if (btnRemoveMenor) {
+    btnRemoveMenor.addEventListener('click', () => {
+        if (menoresCount <= 1) return; // Mínimo 1
+        menoresContainer.removeChild(menoresContainer.lastElementChild);
+        menoresCount--;
+        menoresCountDisplay.textContent = menoresCount;
     });
 }
 
@@ -245,8 +300,29 @@ if (formAtencion) {
     formAtencion.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
+        // Recopilar datos de menores
+        const menores = [];
+        const entries = menoresContainer ? menoresContainer.querySelectorAll('.menor-entry') : [];
+        entries.forEach((entry, i) => {
+            const rut = entry.querySelector(`input[name="menor_rut_${i}"]`);
+            const curso = entry.querySelector(`input[name="menor_curso_${i}"]`);
+            menores.push({
+                rut: rut ? rut.value : '',
+                curso: curso ? curso.value : ''
+            });
+        });
+
+        const data = {
+            unit: document.getElementById('modal-unit').value,
+            official_id: document.getElementById('modal-official-id').value,
+            nombre_apoderado: document.getElementById('modal-nombre').value,
+            rut_apoderado: document.getElementById('modal-rut').value,
+            telefono_apoderado: document.getElementById('modal-telefono') ? document.getElementById('modal-telefono').value : '',
+            tramite: document.getElementById('modal-tramite').value,
+            respuesta: document.getElementById('modal-respuesta').value,
+            observaciones: document.getElementById('modal-observaciones').value,
+            menores_data: menores
+        };
         
         fetch('/atencion/api/registrar-atencion/', {
             method: 'POST',
@@ -263,6 +339,7 @@ if (formAtencion) {
                 setTimeout(() => { statusEl.style.display = 'none'; }, 3000);
                 modal.style.display = 'none';
                 formAtencion.reset();
+                resetMenores();
             } else {
                 alert('Error al registrar atención: ' + result.message);
             }

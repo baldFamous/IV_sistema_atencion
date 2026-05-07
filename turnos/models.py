@@ -54,6 +54,8 @@ class RegistroAtencionDetalle(models.Model):
     TRAMITE_CHOICES = [
         ('cambio_establecimiento', 'Cambio de establecimiento'),
         ('solicita_establecimiento', 'Solicita establecimiento'),
+        ('cambio_nivel', 'Cambio de nivel'),
+        ('apoyo_plataforma', 'Apoyo en uso de plataforma'),
         ('reclamo', 'Reclamo'),
         ('consulta_general', 'Consulta general'),
         ('otro', 'Otro'),
@@ -69,15 +71,17 @@ class RegistroAtencionDetalle(models.Model):
 
     unit = models.CharField(max_length=10, choices=Atencion.UNIT_CHOICES, verbose_name="Unidad")
     official_id = models.IntegerField(choices=Atencion.OFFICIAL_CHOICES, verbose_name="ID Funcionario")
-    nombre_usuario = models.CharField(max_length=150, verbose_name="Nombre del Usuario", blank=True, null=True)
-    rut_usuario = models.CharField(max_length=20, verbose_name="RUT", blank=True, null=True)
+    nombre_apoderado = models.CharField(max_length=150, verbose_name="Nombre del Apoderado", blank=True, null=True)
+    rut_apoderado = models.CharField(max_length=20, verbose_name="RUT Apoderado", blank=True, null=True)
+    telefono_apoderado = models.CharField(max_length=20, verbose_name="Teléfono del Apoderado", blank=True, null=True)
+    menores_data = models.JSONField(verbose_name="Datos de Menores", blank=True, null=True, help_text="Lista de menores [{rut, curso}]")
     tramite = models.CharField(max_length=50, choices=TRAMITE_CHOICES, verbose_name="Trámite")
     respuesta = models.CharField(max_length=50, choices=RESPUESTA_CHOICES, verbose_name="Respuesta")
     observaciones = models.TextField(blank=True, null=True, verbose_name="Observaciones")
     timestamp = models.DateTimeField(default=timezone.now, verbose_name="Fecha y Hora (UTC)")
 
     def __str__(self):
-        return f"Detalle Atención {self.get_unit_display()} - Funcionario {self.official_id} - {self.rut_usuario}"
+        return f"Detalle Atención {self.get_unit_display()} - Funcionario {self.official_id} - {self.nombre_apoderado}"
 
     def timestamp_gmt_minus_4(self):
         gmt_minus_4_tz = pytz.timezone('Etc/GMT+4')

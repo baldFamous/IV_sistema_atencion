@@ -24,9 +24,9 @@ class RecepcionAdmin(admin.ModelAdmin):
 
 @admin.register(RegistroAtencionDetalle)
 class RegistroAtencionDetalleAdmin(admin.ModelAdmin):
-    list_display = ('unit', 'official_id', 'rut_usuario', 'tramite', 'respuesta', 'get_timestamp_gmt_minus_4_display')
+    list_display = ('unit', 'official_id', 'nombre_apoderado', 'rut_apoderado', 'telefono_apoderado', 'tramite', 'respuesta', 'get_timestamp_gmt_minus_4_display')
     list_filter = ('unit', 'official_id', 'tramite', 'respuesta')
-    search_fields = ('rut_usuario', 'nombre_usuario')
+    search_fields = ('rut_apoderado', 'nombre_apoderado')
     readonly_fields = ('timestamp',)
 
     @admin.display(description='Fecha y Hora (GMT-4)', ordering='timestamp')
