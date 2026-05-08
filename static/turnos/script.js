@@ -242,6 +242,50 @@ if (btnCancel && modal) {
     });
 }
 
+// === Formateo automático de RUT (XX.XXX.XXX-X) ===
+function formatRut(value) {
+    // Limpiar todo excepto números y K/k
+    let clean = value.replace(/[^0-9kK]/g, '').toUpperCase();
+    
+    if (clean.length === 0) return '';
+    
+    // Separar cuerpo y dígito verificador
+    let dv = clean.slice(-1);
+    let body = clean.slice(0, -1);
+    
+    if (body.length === 0) return clean;
+    
+    // Agregar puntos al cuerpo
+    let formatted = '';
+    let count = 0;
+    for (let i = body.length - 1; i >= 0; i--) {
+        formatted = body[i] + formatted;
+        count++;
+        if (count % 3 === 0 && i > 0) {
+            formatted = '.' + formatted;
+        }
+    }
+    
+    return formatted + '-' + dv;
+}
+
+function attachRutFormatter(input) {
+    input.addEventListener('input', function() {
+        const pos = this.selectionStart;
+        const prevLen = this.value.length;
+        this.value = formatRut(this.value);
+        // Ajustar posición del cursor
+        const newLen = this.value.length;
+        const diff = newLen - prevLen;
+        this.setSelectionRange(pos + diff, pos + diff);
+    });
+}
+
+// Aplicar a todos los campos RUT existentes
+document.querySelectorAll('.rut-input').forEach(input => {
+    attachRutFormatter(input);
+});
+
 // === Lógica de Menores ===
 let menoresCount = 1;
 const menoresContainer = document.getElementById('menores-container');
@@ -258,7 +302,7 @@ function createMenorEntry(index) {
         <div class="menor-fields">
             <div class="field-group">
                 <label>RUT del Menor:</label>
-                <input type="text" name="menor_rut_${index}" placeholder="Ej: 12345678-9">
+                <input type="text" name="menor_rut_${index}" class="rut-input" placeholder="Ej: 20.543.678-4">
             </div>
             <div class="field-group">
                 <label>Curso del Menor:</label>
@@ -266,6 +310,9 @@ function createMenorEntry(index) {
             </div>
         </div>
     `;
+    // Adjuntar formateador de RUT al nuevo input
+    const rutInput = div.querySelector('.rut-input');
+    if (rutInput) attachRutFormatter(rutInput);
     return div;
 }
 
@@ -300,12 +347,13 @@ if (formAtencion) {
     formAtencion.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Recopilar datos de menores
+        // Recopilar datos de menores usando data-index
         const menores = [];
         const entries = menoresContainer ? menoresContainer.querySelectorAll('.menor-entry') : [];
-        entries.forEach((entry, i) => {
-            const rut = entry.querySelector(`input[name="menor_rut_${i}"]`);
-            const curso = entry.querySelector(`input[name="menor_curso_${i}"]`);
+        entries.forEach((entry) => {
+            const idx = entry.dataset.index;
+            const rut = entry.querySelector(`input[name="menor_rut_${idx}"]`);
+            const curso = entry.querySelector(`input[name="menor_curso_${idx}"]`);
             menores.push({
                 rut: rut ? rut.value : '',
                 curso: curso ? curso.value : ''
