@@ -38,3 +38,30 @@ def display_page(request):
         'is_operational_initial': op_info_sync["is_operational"],
     }
     return render(request, 'turnos/display_page.html', context)
+
+from django.http import JsonResponse
+import json
+from django.views.decorators.csrf import csrf_exempt
+from .models import RegistroAtencionDetalle
+
+@csrf_exempt
+def registrar_atencion_detalle(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            # Create a new record
+            RegistroAtencionDetalle.objects.create(
+                unit=data.get('unit'),
+                official_id=data.get('official_id'),
+                nombre_apoderado=data.get('nombre_apoderado', ''),
+                rut_apoderado=data.get('rut_apoderado', ''),
+                telefono_apoderado=data.get('telefono_apoderado', ''),
+                menores_data=data.get('menores_data', []),
+                tramite=data.get('tramite'),
+                respuesta=data.get('respuesta'),
+                observaciones=data.get('observaciones', '')
+            )
+            return JsonResponse({'status': 'success', 'message': 'Atención registrada correctamente'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
