@@ -83,7 +83,11 @@ body {
 }
 
 /* "Filter" Header */
+<<<<<<< HEAD
 #changelist-filter > h2 {
+=======
+#changelist-filter > div > h2 {
+>>>>>>> ed696c2d3a76494ecf9ad5630dd3049e1fab93f4
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary);
@@ -114,11 +118,15 @@ body {
     background: #e0e7ff;
 }
 
+<<<<<<< HEAD
 /* 
     The flex container for all filter segments.
     We inject a wrapper around the <details> using our custom HTML override,
     so we can grid/flex them smoothly 
 */
+=======
+/* The flex container for all filter segments */
+>>>>>>> ed696c2d3a76494ecf9ad5630dd3049e1fab93f4
 .filter-categories-wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -126,7 +134,10 @@ body {
 }
 
 /* Filter Sub-Spaces (Individual Cards) */
+<<<<<<< HEAD
 /* Django 4 uses details/summary for filters */
+=======
+>>>>>>> ed696c2d3a76494ecf9ad5630dd3049e1fab93f4
 #changelist-filter details {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -200,6 +211,7 @@ body {
     background: var(--accent-hover);
 }
 
+<<<<<<< HEAD
 /* Support for older django versions where filters are h3 + ul */
 #changelist-filter h3 {
     background: var(--card-bg);
@@ -225,6 +237,8 @@ body {
     margin-bottom: 20px;
 }
 
+=======
+>>>>>>> ed696c2d3a76494ecf9ad5630dd3049e1fab93f4
 /* Buttons */
 input[type=submit], button.button, .submit-row input {
     background: var(--accent) !important;
